@@ -1,6 +1,6 @@
 /******************************************************************
  *
- *   YOUR NAME / SECTION NUMBER
+ *   Alex Parker / COMP 272/400C-002 - Spring 2025
  *
  *   Note, additional comments provided throughout this source code
  *   is for educational purposes
@@ -103,8 +103,32 @@ public class Graph {
    */
   
   public int findRoot() {
+// Create an array to count incoming edges for each vertex
+    int[] incomingEdges = new int[numVertices];
 
-    // ADD YOUR CODE HERE - DO NOT FORGET TO ADD YOUR NAME/SECTION AT TOP OF FILE
-    return -1;
-  } 
+    // Count incoming edges for each vertex
+    for (int i = 0; i < numVertices; i++) {
+      for (Integer dest : adjListArr[i]) {
+        incomingEdges[dest]++;
+      }
+    }
+
+    int root = -1;
+    int rootCount = 0;
+
+    // Find vertices with no incoming edges
+    for (int i = 0; i < numVertices; i++) {
+      if (incomingEdges[i] == 0) {
+        root = i;
+        rootCount++;
+      }
+    }
+
+    // Return -1 if there isn't exactly one root
+    if (rootCount != 1) {
+      return -1;
+    }
+
+    return vertexValues.get(root);
+  }
 }

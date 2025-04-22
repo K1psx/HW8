@@ -1,6 +1,6 @@
 /******************************************************************
  *
- *   ADD YOUR NAME / SECTION NUMBER HERE
+ *   Alex Parker / COMP 272/400C-002 - Spring 2025
  *
  *   This java file contains the problem solutions of canFinish and
  *   numGroups methods.
@@ -78,12 +78,38 @@ class ProblemSolutions {
         int numNodes = numExams;  // # of nodes in graph
 
         // Build directed graph's adjacency list
-        ArrayList<Integer>[] adj = getAdjList(numExams, 
-                                        prerequisites); 
+        ArrayList<Integer>[] adj = getAdjList(numExams, prerequisites);
+        int[] inDegree = new int[numExams];
 
-        // ADD YOUR CODE HERE - ADD YOUR NAME / SECTION AT TOP OF FILE
-        return false;
+        // Calculate in-degree for each node
+        for (int i = 0; i < numExams; i++) {
+            for (int neighbor : adj[i]) {
+                inDegree[neighbor]++;
+            }
+        }
 
+        // Queue for nodes with no prerequisites
+        Queue<Integer> queue = new LinkedList<>();
+        for (int i = 0; i < numExams; i++) {
+            if (inDegree[i] == 0) {
+                queue.add(i);
+            }
+        }
+
+        int count = 0;
+        while (!queue.isEmpty()) {
+            int node = queue.poll();
+            count++;
+
+            for (int neighbor : adj[node]) {
+                inDegree[neighbor]--;
+                if (inDegree[neighbor] == 0) {
+                    queue.add(neighbor);
+                }
+            }
+        }
+
+        return count == numExams;
     }
 
 
@@ -165,8 +191,8 @@ class ProblemSolutions {
 
     public int numGroups(int[][] adjMatrix) {
         int numNodes = adjMatrix.length;
-        Map<Integer,List<Integer>> graph = new HashMap();
-        int i = 0, j =0;
+        Map<Integer, List<Integer>> graph = new HashMap();
+        int i = 0, j = 0;
 
         /*
          * Converting the Graph Adjacency Matrix to
@@ -174,9 +200,9 @@ class ProblemSolutions {
          * sample code illustrates a technique to do so.
          */
 
-        for(i = 0; i < numNodes ; i++){
-            for(j = 0; j < numNodes; j++){
-                if( adjMatrix[i][j] == 1 && i != j ){
+        for (i = 0; i < numNodes; i++) {
+            for (j = 0; j < numNodes; j++) {
+                if (adjMatrix[i][j] == 1 && i != j) {
                     // Add AdjList for node i if not there
                     graph.putIfAbsent(i, new ArrayList());
                     // Add AdjList for node j if not there
@@ -190,9 +216,30 @@ class ProblemSolutions {
             }
         }
 
-        // YOUR CODE GOES HERE - you can add helper methods, you do not need
-        // to put all code in this method.
-        return -1;
-    }
+        boolean[] visited = new boolean[numNodes];
+        int groups = 0;
 
+        // Count groups using DFS
+        for (i = 0; i < numNodes; i++) {
+            if (!visited[i]) {
+                dfs(graph, i, visited);
+                groups++;
+            }
+        }
+
+        return groups;
+    }
+    // Helper method for DFS traversal using adjacency list
+    private void dfs(Map<Integer, List<Integer>> graph, int node, boolean[] visited) {
+        visited[node] = true;
+
+        // Get neighbors from the adjacency list we built
+        List<Integer> neighbors = graph.getOrDefault(node, new ArrayList<>());
+
+        for (int neighbor : neighbors) {
+            if (!visited[neighbor]) {
+                dfs(graph, neighbor, visited);
+            }
+        }
+    }
 }
